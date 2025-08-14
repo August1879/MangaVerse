@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String
+  password  String?
+  createdAt DateTime @default(now())
+  ratings   Rating[]
+  wishlist  Wishlist[]
+  progress  ReadingProgress[]
+}
+
+model Work {
+  id        Int      @id @default(autoincrement())
+  title     String
+  author    String?
+  description String?
+  genreTags Json
+  ratingAvg Float     @default(0)
+  status    String    @default("ONGOING")
+  coverUrl  String?
+  chapters  Int       @default(1)
+  createdAt DateTime  @default(now())
+  ratings   Rating[]
+  wishlisted Wishlist[]
+  progress  ReadingProgress[]
+}
+
+model Wishlist {
+  userId Int
+  workId Int
+  addedAt DateTime @default(now())
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work   Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  @@id([userId, workId])
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  workId    Int
+  value     Int
+  review    String?
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work      Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+}
+
+model ReadingProgress {
+  userId Int
+  workId Int
+  progress Float @default(0)
+  chapterIndex Int @default(0)
+  pageIndex Int @default(0)
+  updatedAt DateTime @default(now())
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work   Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  @@id([userId, workId])
+}

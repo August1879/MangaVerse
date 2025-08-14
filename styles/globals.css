@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,body,#__next { height: 100%; }
+body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+.container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+.card { background: white; border-radius: 12px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); padding: 12px; }
+img.cover { width:100%; height:260px; object-fit:cover; border-radius:8px; }
