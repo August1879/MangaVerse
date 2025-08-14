@@ -1,31 +1,36 @@
-import Link from 'next/link'
-
 export default async function Home() {
-  // fetch works from API
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE || ''}/api/works`)
-  const data = await res.json()
-  const items = data?.items || []
+  // Detect if running on server or client
+  const isServer = typeof window === 'undefined';
+
+  let url;
+  if (isServer) {
+    // Absolute URL for server-side
+    url =
+      process.env.NEXT_PUBLIC_BASE ||
+      (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ||
+      'http://localhost:3000';
+    url += '/api/works';
+  } else {
+    // Relative URL for client-side
+    url = '/api/works';
+  }
+
+  const res = await fetch(url);
+  const data = await res.json();
+  const items = data?.items || [];
+
   return (
-    <div className="container">
-      <header style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <h1>MangaVerse</h1>
-        <nav><Link href='/wishlist'>Wishlist</Link> | <Link href='/rewards'>Rewards</Link></nav>
-      </header>
-      <section style={{marginTop:20}}>
-        <h2>Recommended</h2>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:16}}>
-          {items.map(w => (
-            <div key={w.id} className="card">
-              <img src={w.coverUrl || '/covers/cover1.svg'} alt={w.title} className="cover" />
-              <h3 style={{marginTop:8}}>{w.title}</h3>
-              <p style={{fontSize:13, color:'#666'}}>{w.author}</p>
-              <div style={{marginTop:8}}>
-                <Link href={`/work/${w.id}`}>Details</Link> • <Link href={`/work/${w.id}/reader`}>Read</Link>
-              </div>
-            </div>
+    <main>
+      <h1>Manga Works</h1>
+      <ul>
+        {items.map((work, idx) => (
+          <li key={idx}>
+            <strong>{work.title}</strong> by {work.author}
+            <br />
+            <em>{work.description}</em>
+          </li>
           ))}
-        </div>
-      </section>
-    </div>
-  )
-}
+        </ul>
+            </main>
+          );
+      }
