@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 export default async function Home() {
   // Detect if running on server or client
   const isServer = typeof window === 'undefined';
