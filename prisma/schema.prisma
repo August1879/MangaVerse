@@ -1,9 +1,10 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -18,27 +19,28 @@ model User {
 }
 
 model Work {
-  id        Int      @id @default(autoincrement())
-  title     String
-  author    String?
+  id          Int       @id @default(autoincrement())
+  title       String
+  author      String?
   description String?
-  genreTags String
-  ratingAvg Float     @default(0)
-  status    String    @default("ONGOING")
-  coverUrl  String?
-  chapters  Int       @default(1)
-  createdAt DateTime  @default(now())
-  ratings   Rating[]
-  wishlisted Wishlist[]
-  progress  ReadingProgress[]
+  genreTags   String
+  ratingAvg   Float     @default(0)
+  status      String    @default("ONGOING")
+  coverUrl    String?
+  chapters    Int       @default(1)
+  createdAt   DateTime  @default(now())
+  ratings     Rating[]
+  wishlisted  Wishlist[]
+  progress    ReadingProgress[]
 }
 
 model Wishlist {
-  userId Int
-  workId Int
+  userId  Int
+  workId  Int
   addedAt DateTime @default(now())
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  work   Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work    Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+
   @@id([userId, workId])
 }
 
@@ -54,13 +56,14 @@ model Rating {
 }
 
 model ReadingProgress {
-  userId Int
-  workId Int
-  progress Float @default(0)
-  chapterIndex Int @default(0)
-  pageIndex Int @default(0)
-  updatedAt DateTime @default(now())
+  userId      Int
+  workId      Int
+  progress    Float   @default(0)
+  chapterIndex Int    @default(0)
+  pageIndex    Int    @default(0)
+  updatedAt    DateTime @default(now())
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   work   Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+
   @@id([userId, workId])
 }
